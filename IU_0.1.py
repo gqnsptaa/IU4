@@ -15,7 +15,7 @@ def main():
         elif user_choice == "2":
             add_result(results, FILE_NAME)
         elif user_choice == "3":
-            remove_result(results)
+            remove_result(results, FILE_NAME)
         elif user_choice == "4":
             break
         else:
@@ -52,30 +52,36 @@ def add_result(result_list, filename):
 
     result = [namn, first_result, second_result, third_result, total, genomsnitt]
     result_list.append(result)
+    save_file(result_list, filename)
 
-    my_file = open(filename, 'a')
-    line = ";".join(map(str, result))
-    my_file.write(f"{line}\n")
-    my_file.flush()
-    my_file.close()
-
-def remove_result(result_list):
+def remove_result(result_list, filename):
     print("\nTa bort en resultat")
     print("-"*30)
     remove_name = input("Vems resultat vill du radera? ")
-    result_removed = False 
+    result_removed = False
 
     for result in result_list:
         if result[0] == remove_name:
             result_list.remove(result)
             result_removed = True
-            break
+            break 
 
     if result_removed:
         print(f"{remove_name} har raderats!")
+        save_file(result_list, filename)
     else:
         print("Det finns ingen person med angiven namn!")
 
+def save_file(result_list, filename):
+    file_output = "" 
+
+    for result in result_list:
+        file_output += ";".join(map(str, result))+"\n"
+
+    my_file = open(filename, 'w')
+    my_file.write(file_output)
+    my_file.flush()
+    my_file.close()
 
 def print_menu():
     print("\nMeny")
@@ -96,7 +102,6 @@ def read_results_from_file(filename):
             item = row.split(";")
             if len(item) > 1:
                 results.append(item)
-        print(results)
         return results 
     except FileNotFoundError:
         my_file = open(filename, "w")
